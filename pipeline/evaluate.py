@@ -13,9 +13,19 @@ import pandas as pd
 FORECASTERS = ["naive_2d", "naive_7d", "mean_7d", "model"]
 
 
+def finished(df: pd.DataFrame) -> pd.DataFrame:
+    """Drop delivery days that are not over yet (today, while the data runs up to now)."""
+    if "start_time" not in df:
+        return df
+    last_end = df.loc[df["price"].notna(), "start_time"].max() + pd.Timedelta(minutes=30)
+    next_day = pd.to_datetime(df["delivery_date"]) + pd.Timedelta(days=1)
+    day_end = next_day.dt.tz_localize("Europe/London").dt.tz_convert("UTC")
+    return df[(day_end <= last_end).to_numpy()]
+
+
 def common_rows(df: pd.DataFrame) -> pd.DataFrame:
-    """Only half-hours where every forecaster and the actual price exist."""
-    return df.dropna(subset=["price", *FORECASTERS])
+    """Only half-hours of finished days where every forecaster and the actual price exist."""
+    return finished(df).dropna(subset=["price", *FORECASTERS])
 
 
 def scores(df: pd.DataFrame) -> pd.DataFrame:

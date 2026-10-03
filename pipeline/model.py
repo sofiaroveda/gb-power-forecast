@@ -7,7 +7,7 @@ Baselines (no fitting):
 
 Model: gradient-boosted trees on the demand and wind forecasts, calendar and
 recent prices. It is refitted at the start of every month using only rows whose
-prices were realised before that month's first cutoff, so it never trains on the
+prices were published by that month's first cutoff, so it never trains on the
 future.
 """
 
@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
 
-from pipeline.features import FEATURES
+from pipeline.features import FEATURES, price_public_at
 
 BASELINES = {"naive_2d": "lag_2d", "naive_7d": "lag_7d", "mean_7d": "mean_same_period_7d"}
 
@@ -38,8 +38,8 @@ def walk_forward(df: pd.DataFrame, min_train_days: int = 90, seed: int = 0) -> p
     for month in months.unique():
         test = months == month
         cutoff = df.loc[test, "cutoff"].min()
-        # a half-hour's price is known once it has finished
-        train = (df["start_time"] + pd.Timedelta(minutes=30) <= cutoff) & df["price"].notna()
+        # a half-hour's price is known once Elexon has published it
+        train = (price_public_at(df["start_time"]) <= cutoff) & df["price"].notna()
         if (pd.Timestamp(month.start_time) - first_date).days < min_train_days or train.sum() < 1000:
             continue
         model = make_model(seed).fit(df.loc[train, FEATURES], df.loc[train, "price"])

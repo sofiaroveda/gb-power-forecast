@@ -40,8 +40,10 @@ def test_price_lags(synthetic):
     t = df.index[3000]
     assert df.loc[t, "lag_2d"] == p[t - pd.Timedelta(days=2)]
     assert df.loc[t, "lag_7d"] == p[t - pd.Timedelta(days=7)]
-    window = p[(p.index >= df.loc[t, "cutoff"] - pd.Timedelta(hours=24)) &
-               (p.index <= df.loc[t, "cutoff"] - pd.Timedelta(minutes=30))]
+    # the 24 hours up to the last price counted as published by the cutoff: the
+    # half-hour that ended 6 hours before it (Elexon publishes prices in late batches)
+    last = df.loc[t, "cutoff"] - pd.Timedelta(hours=6, minutes=30)
+    window = p[(p.index > last - pd.Timedelta(hours=24)) & (p.index <= last)]
     assert abs(df.loc[t, "mean_last_24h"] - window.mean()) < 1e-9
 
 

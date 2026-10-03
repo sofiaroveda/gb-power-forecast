@@ -9,16 +9,42 @@ allowed into the features for day D. tests/test_no_lookahead.py checks this.
 
 from __future__ import annotations
 
+from datetime import date, timedelta
+
 import numpy as np
 import pandas as pd
 
 UK = "Europe/London"
 CUTOFF_HOUR_UTC = 8
+PERIOD = pd.Timedelta(minutes=30)
+# Elexon publishes the APX Market Index price in batches, well after each
+# half-hour ends: on 3 Oct 2026 the 17:00-17:30 UTC price was still missing at
+# 18:36. A price only counts as known 6 hours after its half-hour ends, so at the
+# 08:00 cutoff the last one used is 01:30-02:00. Allowing 2 hours instead would
+# lower the backtest MAE by only 6p. The live run records the latest price
+# actually available (forecast.json, last_price_available) to keep this checked.
+PRICE_DELAY = pd.Timedelta(hours=6)
 FEATURES = [
     "demand_fc", "demand_peak_fc", "wind_fc", "residual_fc", "wind_share_fc",
     "hour", "dow", "month", "weekend",
     "lag_2d", "lag_7d", "mean_same_period_7d", "mean_last_24h",
 ]
+
+
+def price_public_at(start_time):
+    """When the price for the half-hour starting at start_time was published."""
+    return start_time + PERIOD + PRICE_DELAY
+
+
+def add_day(prices: pd.DataFrame, day: date) -> pd.DataFrame:
+    """Add the half-hours of UK delivery day `day` that have no row yet, with no
+    price, so the features and the model can forecast a day that has not happened."""
+    t = pd.date_range(pd.Timestamp(day, tz=UK), pd.Timestamp(day + timedelta(days=1), tz=UK),
+                      freq="30min", inclusive="left").tz_convert("UTC")
+    new = pd.DataFrame({"start_time": t[~t.isin(prices["start_time"])]})
+    new["price"] = float("nan")
+    return pd.concat([prices, new], ignore_index=True).sort_values(
+        "start_time").reset_index(drop=True)
 
 
 def delivery_frame(prices: pd.DataFrame) -> pd.DataFrame:
@@ -68,9 +94,9 @@ def price_lags(rows: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame:
     counts = np.isfinite(same).sum(axis=1)
     sums = np.nansum(same, axis=1)
     out["mean_same_period_7d"] = np.where(counts > 0, sums / np.maximum(counts, 1), np.nan)
-    # mean price over the 24 hours before the cutoff (all realised by then)
+    # mean price over the 24 hours up to the last price published by the cutoff
     roll = s.rolling("24h").mean()
-    last_known = rows["cutoff"] - pd.Timedelta(minutes=30)
+    last_known = rows["cutoff"] - PERIOD - PRICE_DELAY
     uniq = pd.DatetimeIndex(last_known.unique())
     at_cutoff = roll.reindex(roll.index.union(uniq)).ffill().reindex(uniq)
     out["mean_last_24h"] = last_known.map(at_cutoff).values

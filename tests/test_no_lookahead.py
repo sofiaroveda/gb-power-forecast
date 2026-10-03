@@ -17,7 +17,9 @@ def test_scrambling_the_future_does_not_change_past_forecasts(synthetic):
 
     rng = np.random.default_rng(99)
     p2 = prices.copy()
-    after = p2["start_time"] >= split
+    # every price not yet published at the split: Elexon publishes prices in late
+    # batches, so a price counts as published 6 hours after its half-hour ends
+    after = p2["start_time"] + pd.Timedelta(hours=6, minutes=30) > split
     p2.loc[after, "price"] = rng.normal(500, 300, after.sum())
     d2, w2, k2 = demand.copy(), wind.copy(), peak.copy()
     for fc in (d2, w2, k2):
