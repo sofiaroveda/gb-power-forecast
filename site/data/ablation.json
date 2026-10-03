@@ -1,0 +1,37 @@
+{
+ "first_day": "2024-04-01",
+ "last_day": "2026-10-02",
+ "half_hours": 43848,
+ "runs": [
+  {
+   "label": "All inputs (the model)",
+   "mae": 17.62,
+   "skill": 0.33,
+   "placebo": false
+  },
+  {
+   "label": "Without recent prices",
+   "mae": 24.18,
+   "skill": 0.08,
+   "placebo": false
+  },
+  {
+   "label": "Without demand and wind forecasts",
+   "mae": 22.45,
+   "skill": 0.14,
+   "placebo": false
+  },
+  {
+   "label": "Recent prices and wind forecast only",
+   "mae": 18.33,
+   "skill": 0.3,
+   "placebo": false
+  },
+  {
+   "label": "Placebo: all inputs plus the previous day's actual prices",
+   "mae": 16.99,
+   "skill": 0.35,
+   "placebo": true
+  }
+ ]
+}

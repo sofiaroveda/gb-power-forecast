@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Backtest Results</title>
+  <meta name="description" content="How accurate the GB power price forecast has been in a walk-forward backtest, how it works and where the data comes from.">
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="./"><img src="img/icon.svg" alt="" width="22" height="22">GB Power Forecast</a>
+      <nav>
+        <a href="./">Forecast</a>
+        <a href="results.html" aria-current="page">Results</a>
+        <a href="https://github.com/sofiaroveda/gb-power-forecast">Code</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <p class="eyebrow">Walk-forward backtest</p>
+      <h1>How accurate has it been?</h1>
+      <p class="lede">Every forecast below was made the way the live one is: using only what was public at 08:00 UTC the day before, with the model refitted each month on earlier data only. Scored from <span id="bt-range"></span>: <span id="bt-days"></span> days and <span id="bt-n"></span> half-hours.</p>
+    </section>
+
+    <section class="card">
+      <h2>Overall</h2>
+      <p class="card-sub">Errors in £/MWh. Every forecast is scored on the same half-hours. "Improvement" is how much smaller the average error is than copying the price from the same half-hour two days earlier, the latest full day known at the cutoff.</p>
+      <div class="table-scroll"><table id="bt-table"></table></div>
+      <p class="note">The model's average error is <span id="bt-vs-best"></span> lower than the best simple baseline, the 7-day average. It has no gas or carbon price yet, which is the most likely way to improve it.</p>
+    </section>
+
+    <section class="card">
+      <h2>Average error by quarter</h2>
+      <p class="card-sub">£/MWh. <span id="quarter-wins"></span> Errors rise for every forecast when prices move fast.</p>
+      <div class="legend-slot"></div>
+      <div id="quarter-chart" class="chart chart-short"></div>
+      <details>
+        <summary>Show as a table</summary>
+        <div class="table-scroll"><table id="quarter-table"></table></div>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>Where the accuracy comes from</h2>
+      <p class="card-sub">The same backtest re-run with some inputs left out, <span id="ablation-range"></span>.</p>
+      <div class="table-scroll"><table id="ablation-table"></table></div>
+      <p class="note">Recent prices and the wind forecast do most of the work. Wind decides how much gas generation is needed, and recent prices carry the gas price level, which the model has no other way to see. The last row is a check for look-ahead: adding the previous day's actual prices, which are mostly unknown at the cutoff, makes the forecast better, so the honest model is not already getting that information from somewhere.</p>
+    </section>
+
+    <section class="card prose">
+      <h2>How it works</h2>
+      <p>The target is the half-hourly Market Index price published by Elexon, an average of short-term trades in each half-hour. Every morning at 08:00 UTC, before the day-ahead auctions, the forecast for the next UK day is made from what had been published by then.</p>
+      <p>The inputs are the National Demand Forecast, the wind generation forecast and the forecast daily peak demand, each the latest version published before the cutoff; residual demand (demand minus wind) and wind's share of demand; the time of day, day of the week and month; and recent prices. Elexon publishes prices in batches, sometimes more than two hours late, so a price only counts as known 6 hours after its half-hour ends.</p>
+      <p>The model is gradient-boosted decision trees (scikit-learn), trained to minimise the average absolute error because prices sometimes spike. It is refitted at the start of every month on all earlier data. The live forecast on the front page is made by the same code that produced the backtest.</p>
+      <p>The simplest baseline copies the price from the same half-hour two days earlier, because at 08:00 most of the previous day's prices have not happened yet. Using yesterday's price would be look-ahead. A test in the code scrambles everything published after a date and fails if any earlier forecast changes.</p>
+      <p>In winter the half-hourly demand forecast for most of the next day comes out at 08:45 UTC, after the cutoff, so for November to March the model mostly relies on the daily peak forecast instead. The cutoff was not moved to get round this.</p>
+      <h2>Limitations</h2>
+      <p>There is no gas or carbon price yet. Gas plants usually set the GB price, so this is the most likely improvement. Solar is not modelled separately; it partly shows up in the demand forecast. The model gives one number per half-hour, with no range.</p>
+      <h2>About</h2>
+      <p>Built by Sofia Roveda, a materials science and engineering student at Imperial College London, as a project in energy market forecasting. The code, tests and every saved forecast are on <a href="https://github.com/sofiaroveda/gb-power-forecast">GitHub</a>.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Data from the <a href="https://data.elexon.co.uk">Elexon Insights Solution API</a>. Not affiliated with Elexon. Updated every morning by GitHub Actions.</p>
+    </div>
+  </footer>
+  <script type="module" src="js/results.js"></script>
+</body>
+</html>

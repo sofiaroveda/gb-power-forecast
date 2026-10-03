@@ -49,13 +49,20 @@ def _get(url: str, params: dict, retries: int = 4) -> dict:
     raise RuntimeError(f"Failed after {retries} attempts: {url} {params}")
 
 
-def _cached(name: str, fetch) -> dict:
+def _now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+def _cached(name: str, fetch, window_end: datetime) -> dict:
+    """Fetch once and keep the result, but only for windows that ended more than
+    a day ago: recent windows can still gain rows, so they are fetched again."""
     path = RAW_DIR / f"{name}.json"
     if path.exists():
         return json.loads(path.read_text())
     data = fetch()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data))
+    if window_end <= _now() - timedelta(days=1):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(data))
     return data
 
 
@@ -128,7 +135,7 @@ def download_prices(start: date, end: date) -> pd.DataFrame:
         name = f"mid_{a:%Y%m%d}_{b:%Y%m%d}"
         payload = _cached(name, lambda a=a, b=b: _get(
             f"{BASE}/balancing/pricing/market-index",
-            {"from": _iso(a), "to": _iso(b), "dataProviders": "APXMIDP", "format": "json"}))
+            {"from": _iso(a), "to": _iso(b), "dataProviders": "APXMIDP", "format": "json"}), b)
         frames.append(parse_mid(payload))
     df = pd.concat(frames, ignore_index=True)
     df = df.drop_duplicates("start_time").sort_values("start_time")
@@ -152,7 +159,7 @@ def download_forecasts(dataset: str, value_key: str, start: date, end: date,
         name = f"{dataset.lower()}_{a:%Y%m%d%H}_{b:%H}"
         payload = _cached(name, lambda a=a, b=b: _get(
             f"{BASE}/datasets/{dataset}",
-            {"publishDateTimeFrom": _iso(a), "publishDateTimeTo": _iso(b), "format": "json"}))
+            {"publishDateTimeFrom": _iso(a), "publishDateTimeTo": _iso(b), "format": "json"}), b)
         frames.append(parse_forecast(payload, value_key))
         d += timedelta(days=1)
     df = pd.concat(frames, ignore_index=True)
@@ -169,7 +176,7 @@ def download_daily_peak(start: date, end: date) -> pd.DataFrame:
         name = f"ndfd_{a:%Y%m%d}_{b:%Y%m%d}"
         payload = _cached(name, lambda a=a, b=b: _get(
             f"{BASE}/datasets/NDFD",
-            {"publishDateTimeFrom": _iso(a), "publishDateTimeTo": _iso(b), "format": "json"}))
+            {"publishDateTimeFrom": _iso(a), "publishDateTimeTo": _iso(b), "format": "json"}), b)
         frames.append(parse_ndfd(payload))
     df = pd.concat(frames, ignore_index=True)
     return df.drop_duplicates(["publish_time", "forecast_date"]).sort_values(

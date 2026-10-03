@@ -1,0 +1,130 @@
+{
+ "first_day": "2024-04-01",
+ "last_day": "2026-10-02",
+ "days": 915,
+ "half_hours": 43848,
+ "scores": {
+  "naive_2d": {
+   "mae": 26.23,
+   "rmse": 44.37,
+   "skill": 0.0
+  },
+  "naive_7d": {
+   "mae": 27.55,
+   "rmse": 45.53,
+   "skill": -0.05
+  },
+  "mean_7d": {
+   "mae": 22.64,
+   "rmse": 35.8,
+   "skill": 0.14
+  },
+  "model": {
+   "mae": 17.62,
+   "rmse": 28.82,
+   "skill": 0.33
+  }
+ },
+ "quarters": [
+  {
+   "quarter": "2024 Q2",
+   "days": 91,
+   "mae": {
+    "naive_2d": 22.33,
+    "naive_7d": 23.71,
+    "mean_7d": 18.88,
+    "model": 15.12
+   }
+  },
+  {
+   "quarter": "2024 Q3",
+   "days": 92,
+   "mae": {
+    "naive_2d": 21.86,
+    "naive_7d": 24.67,
+    "mean_7d": 18.97,
+    "model": 13.28
+   }
+  },
+  {
+   "quarter": "2024 Q4",
+   "days": 92,
+   "mae": {
+    "naive_2d": 28.53,
+    "naive_7d": 28.42,
+    "mean_7d": 24.7,
+    "model": 17.94
+   }
+  },
+  {
+   "quarter": "2025 Q1",
+   "days": 90,
+   "mae": {
+    "naive_2d": 25.08,
+    "naive_7d": 30.36,
+    "mean_7d": 24.83,
+    "model": 18.01
+   }
+  },
+  {
+   "quarter": "2025 Q2",
+   "days": 91,
+   "mae": {
+    "naive_2d": 29.28,
+    "naive_7d": 26.88,
+    "mean_7d": 22.37,
+    "model": 15.68
+   }
+  },
+  {
+   "quarter": "2025 Q3",
+   "days": 92,
+   "mae": {
+    "naive_2d": 23.95,
+    "naive_7d": 26.16,
+    "mean_7d": 20.27,
+    "model": 12.79
+   }
+  },
+  {
+   "quarter": "2025 Q4",
+   "days": 92,
+   "mae": {
+    "naive_2d": 19.88,
+    "naive_7d": 22.12,
+    "mean_7d": 17.99,
+    "model": 13.76
+   }
+  },
+  {
+   "quarter": "2026 Q1",
+   "days": 90,
+   "mae": {
+    "naive_2d": 24.28,
+    "naive_7d": 27.22,
+    "mean_7d": 21.54,
+    "model": 18.71
+   }
+  },
+  {
+   "quarter": "2026 Q2",
+   "days": 91,
+   "mae": {
+    "naive_2d": 30.85,
+    "naive_7d": 28.87,
+    "mean_7d": 23.88,
+    "model": 20.85
+   }
+  },
+  {
+   "quarter": "2026 Q3",
+   "days": 92,
+   "mae": {
+    "naive_2d": 36.21,
+    "naive_7d": 37.4,
+    "mean_7d": 33.08,
+    "model": 30.04
+   }
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GB Power Forecast</title>
+  <meta name="description" content="Tomorrow's half-hourly GB electricity price, forecast each morning from the demand and wind forecasts public by 08:00 UTC, and tested against simple baselines.">
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="./"><img src="img/icon.svg" alt="" width="22" height="22">GB Power Forecast</a>
+      <nav>
+        <a href="./" aria-current="page">Forecast</a>
+        <a href="results.html">Results</a>
+        <a href="https://github.com/sofiaroveda/gb-power-forecast">Code</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <p class="eyebrow">Day-ahead forecast</p>
+      <h1>GB power price for <span id="fc-day">tomorrow</span></h1>
+      <p class="lede">Every half-hour of the GB Market Index price, forecast from what was public at <span id="fc-cutoff">08:00 UTC the day before</span>: Elexon's demand and wind forecasts and the prices already published. It is an analysis project, not trading advice.</p>
+      <div class="tiles">
+        <div class="tile"><div class="tile-label">Average</div><div class="tile-value" id="fc-avg">–</div><div class="tile-sub">£/MWh</div></div>
+        <div class="tile"><div class="tile-label">Highest half-hour</div><div class="tile-value" id="fc-high">–</div><div class="tile-sub" id="fc-high-at"></div></div>
+        <div class="tile"><div class="tile-label">Lowest half-hour</div><div class="tile-value" id="fc-low">–</div><div class="tile-sub" id="fc-low-at"></div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Forecast price by half-hour</h2>
+      <p class="card-sub">£/MWh, UK time. The two simple baselines are shown for comparison.</p>
+      <div class="legend-slot"></div>
+      <div id="fc-chart" class="chart"></div>
+      <details>
+        <summary>Show as a table</summary>
+        <div class="table-scroll"><table id="fc-table"></table></div>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>What the forecast was given</h2>
+      <p class="card-sub">Elexon's national demand forecast and wind generation forecast for the same day, latest versions published by the cutoff.</p>
+      <div class="legend-slot"></div>
+      <div id="drivers-chart" class="chart chart-short"></div>
+      <p class="note" id="drivers-note"></p>
+    </section>
+
+    <section class="card">
+      <h2>The last 14 days</h2>
+      <p class="card-sub">The model's forecast against the price that happened, <span id="recent-range"></span>. Each day's forecast was made the morning before.</p>
+      <div class="legend-slot"></div>
+      <div id="recent-chart" class="chart"></div>
+      <h3>Average error per day (£/MWh)</h3>
+      <p class="card-sub">Lowest error each day in bold.</p>
+      <div class="table-scroll"><table id="recent-table"></table></div>
+    </section>
+
+    <section class="card">
+      <h2>Live record</h2>
+      <div id="record"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Data from the <a href="https://data.elexon.co.uk">Elexon Insights Solution API</a>. Not affiliated with Elexon. Built by Sofia Roveda, a materials science and engineering student at Imperial College London. Updated every morning by GitHub Actions.</p>
+    </div>
+  </footer>
+  <script type="module" src="js/home.js"></script>
+</body>
+</html>

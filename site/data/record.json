@@ -1,0 +1,12 @@
+{
+ "first_day": "2026-10-04",
+ "days": [
+  {
+   "day": "2026-10-04",
+   "complete": false,
+   "mae_model": null,
+   "mae_naive_2d": null
+  }
+ ],
+ "totals": null
+}

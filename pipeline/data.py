@@ -1,7 +1,10 @@
 """Download prices and forecasts and save them as CSV files in data/.
 
-    python -m pipeline.data                      # 2023-01-01 to yesterday
+    python -m pipeline.data                      # 2023-01-01 to now
     python -m pipeline.data --start 2024-01-01   # shorter history, quicker
+
+By default the download runs up to now: today's prices so far and this
+morning's forecasts are needed for tomorrow's live forecast.
 
 The first full run makes roughly 2,500 small requests and takes a while;
 after that, cached chunks in data/raw/ make re-runs fast.
@@ -33,7 +36,9 @@ def load(name: str) -> pd.DataFrame:
 def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--start", default="2023-01-01")
-    p.add_argument("--end", default=str(date.today() - timedelta(days=1)))
+    # end is exclusive, so the default (tomorrow, UK time) includes today so far
+    tomorrow = pd.Timestamp.now(tz="Europe/London").date() + timedelta(days=1)
+    p.add_argument("--end", default=str(tomorrow))
     args = p.parse_args(argv)
     start, end = date.fromisoformat(args.start), date.fromisoformat(args.end)
 
