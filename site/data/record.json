@@ -57,21 +57,27 @@
   },
   {
    "day": "2026-10-13",
-   "complete": false,
-   "mae_model": null,
-   "mae_naive_2d": null
+   "complete": true,
+   "mae_model": 26.32,
+   "mae_naive_2d": 34.83
   },
   {
    "day": "2026-10-14",
    "complete": false,
    "mae_model": null,
    "mae_naive_2d": null
+  },
+  {
+   "day": "2026-10-15",
+   "complete": false,
+   "mae_model": null,
+   "mae_naive_2d": null
   }
  ],
  "totals": {
-  "days": 9,
-  "half_hours": 432,
-  "mae_model": 35.37,
-  "mae_naive_2d": 69.1
+  "days": 10,
+  "half_hours": 480,
+  "mae_model": 34.46,
+  "mae_naive_2d": 65.68
  }
 }
