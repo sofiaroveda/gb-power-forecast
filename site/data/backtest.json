@@ -1,27 +1,27 @@
 {
  "first_day": "2024-04-01",
- "last_day": "2026-10-25",
- "days": 938,
- "half_hours": 44954,
+ "last_day": "2026-10-26",
+ "days": 939,
+ "half_hours": 45002,
  "scores": {
   "naive_2d": {
-   "mae": 26.85,
-   "rmse": 45.06,
+   "mae": 26.93,
+   "rmse": 45.17,
    "skill": 0.0
   },
   "naive_7d": {
-   "mae": 28.22,
+   "mae": 28.23,
    "rmse": 46.26,
    "skill": -0.05
   },
   "mean_7d": {
-   "mae": 23.11,
+   "mae": 23.12,
    "rmse": 36.41,
    "skill": 0.14
   },
   "model": {
-   "mae": 18.21,
-   "rmse": 29.55,
+   "mae": 18.28,
+   "rmse": 29.71,
    "skill": 0.32
   }
  },
