@@ -1,27 +1,27 @@
 {
  "first_day": "2024-04-01",
- "last_day": "2026-11-04",
- "days": 948,
- "half_hours": 45434,
+ "last_day": "2026-11-05",
+ "days": 949,
+ "half_hours": 45482,
  "scores": {
   "naive_2d": {
-   "mae": 26.99,
-   "rmse": 45.22,
+   "mae": 26.98,
+   "rmse": 45.2,
    "skill": 0.0
   },
   "naive_7d": {
    "mae": 28.67,
-   "rmse": 46.96,
+   "rmse": 46.95,
    "skill": -0.06
   },
   "mean_7d": {
    "mae": 23.42,
-   "rmse": 36.77,
+   "rmse": 36.76,
    "skill": 0.13
   },
   "model": {
-   "mae": 18.81,
-   "rmse": 30.6,
+   "mae": 18.83,
+   "rmse": 30.64,
    "skill": 0.3
   }
  },
@@ -128,12 +128,12 @@
   },
   {
    "quarter": "2026 Q4",
-   "days": 35,
+   "days": 36,
    "mae": {
-    "naive_2d": 46.9,
-    "naive_7d": 57.31,
-    "mean_7d": 43.65,
-    "model": 49.96
+    "naive_2d": 46.23,
+    "naive_7d": 56.29,
+    "mean_7d": 43.02,
+    "model": 49.81
    }
   }
  ]
